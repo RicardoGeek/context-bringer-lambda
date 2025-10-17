@@ -2,6 +2,10 @@
 import chromium from '@sparticuz/chromium';
 import puppeteer from 'puppeteer-core';
 
+
+chromium.setHeadlessMode = true;   // important on Lambda
+chromium.setGraphicsMode = false;  // disable GPU paths
+
 // --- Timeouts ---
 const NAV_TIMEOUT_MS = 20000;
 const WAIT_FOR_CONTENT_MS = 15000; // This is the most critical timeout now
@@ -9,11 +13,23 @@ const EVAL_TIMEOUT_MS = 5000;
 const TOTAL_JOB_TIMEOUT_MS = 30000; // Increased total job time
 
 export const handler = async (event) => {
+  const executablePath = await chromium.executablePath();
+  console.log('[chromium] execPath:', executablePath);
+  console.log('[env]', process.platform, process.arch);
+
   const browser = await puppeteer.launch({
-    args: [...chromium.args, '--no-sandbox', '--disable-dev-shm-usage'],
-    executablePath: await chromium.executablePath(),
-    headless: chromium.headless,
-    defaultViewport: { width: 390, height: 844 },
+    executablePath,
+    args: [
+      ...chromium.args,            // only Sparticuz args
+      '--no-sandbox',
+      '--disable-dev-shm-usage',   // Lambda /dev/shm is tiny
+      `--user-data-dir=/tmp/chrome-user-data`, // keep profiles in /tmp
+    ],
+    headless: chromium.headless,   // honor Sparticuz headless
+    defaultViewport: chromium.defaultViewport,
+    ignoreHTTPSErrors: true,
+    // Helps some Lambda images that bundle extensions
+    ignoreDefaultArgs: ['--disable-extensions'],
   });
 
   let page;
