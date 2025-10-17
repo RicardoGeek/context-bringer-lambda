@@ -1,0 +1,24 @@
+{
+  "name": "context-bringer-lambda",
+  "version": "1.0.0",
+  "description": "",
+  "main": "handler.js",
+  "scripts": {
+    "test:cli": "node run-local.mjs --handle=Forbes"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RicardoGeek/context-bringer-lambda.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RicardoGeek/context-bringer-lambda/issues"
+  },
+  "homepage": "https://github.com/RicardoGeek/context-bringer-lambda#readme",
+  "dependencies": {
+    "@sparticuz/chromium": "^141.0.0",
+    "express": "^5.1.0",
+    "puppeteer-core": "^24.25.0"
+  }
+}
